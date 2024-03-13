@@ -1,19 +1,19 @@
 from pathlib import Path
 
-from aiogram import Router, types, F
+from aiogram import F, Router, types
 from aiogram.filters import CommandStart
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import State, StatesGroup
 from aiogram.utils.chat_action import ChatActionSender
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
-from aiogram.fsm.state import StatesGroup, State
-from aiogram.fsm.context import FSMContext
 
-from src.settings import settings
 from src.routers.messages import (
-    START_MESSAGE,
     CALLBACK_MESSAGE,
     END_MESSAGE,
     RESPONSE_MESSAGE,
+    START_MESSAGE,
 )
+from src.settings import settings
 
 router = Router(name=__name__)
 
@@ -26,15 +26,19 @@ class Context(StatesGroup):
 async def handle_start(message: types.Message) -> None:
     print(message.chat.id)
     async with ChatActionSender.typing(bot=message.bot, chat_id=message.chat.id):
-        await message.answer_photo(
-            photo=types.FSInputFile(
-                str(
-                    Path(__file__).parent.parent
-                    / "static"
-                    / "photo_2024-02-26_20-41-30.jpg"
+        await message.answer_media_group(
+            media=[
+                types.InputMediaPhoto(
+                    media=types.FSInputFile(
+                        str(Path(__file__).parent.parent / "static" / "photo_1.jpg")
+                    )
                 ),
-                filename="coddy_lesson",
-            )
+                types.InputMediaPhoto(
+                    media=types.FSInputFile(
+                        str(Path(__file__).parent.parent / "static" / "photo_2.jpg")
+                    )
+                ),
+            ]
         )
     builder = InlineKeyboardBuilder()
     builder.button(text="7-10 лет", callback_data="7-10 лет")
